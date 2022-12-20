@@ -1,2 +1,2 @@
-# binaural Beats js
-ok
+# Binaural Beats
+basic Javascript Binaural Beats generator. 
