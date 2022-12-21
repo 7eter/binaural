@@ -29,15 +29,15 @@ playButton.addEventListener('click', () => {
   // Set the frequency of the oscillators
   const baseFrequency = 200; // This is the base frequency, in Hz
   const differenceFrequency = 10; // This is the difference between the left and right channel frequencies, in Hz
-  leftChannel.frequency.setValueAtTime(baseFrequencyInput.value - differenceFrequencyInput.value, audioCtx.currentTime);
-  rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value), audioCtx.currentTime);
+  leftChannel.frequency.setValueAtTime(baseFrequencyInput.value - differenceFrequencyInput.value/2, audioCtx.currentTime);
+  rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value)/2, audioCtx.currentTime);
   const pannerLeft = audioCtx.createPanner();
   const pannerRight = audioCtx.createPanner();
   gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
 
   // Set the panning of the channels
-  pannerLeft.pan.setValueAtTime(-1, audioCtx.currentTime); // Pan the left channel to the left speaker
-  pannerRight.pan.setValueAtTime(1, audioCtx.currentTime); // Pan the right channel to the right speaker
+  pannerLeft.setPosition(-1, 0, 0); // Pan the left channel to the left speaker
+  pannerRight.setPosition(1, 0, 0); // Pan the right channel to the right speaker
   
   console.log("base frequency = " + baseFrequencyInput.value)
   console.log("difference frequency = " + differenceFrequencyInput.value)
