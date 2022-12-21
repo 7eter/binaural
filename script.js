@@ -3,7 +3,6 @@ const differenceFrequencyInput = document.getElementById('difference-frequency')
 const volumeInput = document.getElementById('volume');
 const playButton = document.getElementById('play-button');
 
-let initialized=false;
 let playing=false;
 
 let audioCtx;
@@ -17,6 +16,7 @@ playButton.addEventListener('click', () => {
     rightChannel.stop();
     console.log("stoped");
     playing=false;
+    playButton.innerHTML="Play";
     return;
   }
 
@@ -25,7 +25,6 @@ playButton.addEventListener('click', () => {
   leftChannel = audioCtx.createOscillator();
   rightChannel = audioCtx.createOscillator();
   gainNode = audioCtx.createGain();
-  initialized=true;
 
   // Set the frequency of the oscillators
   const baseFrequency = 200; // This is the base frequency, in Hz
@@ -50,4 +49,5 @@ playButton.addEventListener('click', () => {
   rightChannel.start();
   console.log("started");
   playing=true;
+  playButton.innerHTML="Stop";
   });
