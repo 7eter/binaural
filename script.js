@@ -6,16 +6,26 @@ const playButton = document.getElementById('play-button');
 let initialized=false;
 let playing=false;
 
-
+let audioCtx;
+let leftChannel;
+let rightChannel;
+let gainNode;
 
 playButton.addEventListener('click', () => {
+  if(playing){
+    leftChannel.stop();
+    rightChannel.stop();
+    console.log("stoped");
+    playing=false;
+    return;
+  }
 
-    // Set up audio context and nodes
-    const audioCtx = new AudioContext();
-    const leftChannel = audioCtx.createOscillator();
-    const rightChannel = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    initialized=true;
+  // Set up audio context and nodes
+  audioCtx = new AudioContext();
+  leftChannel = audioCtx.createOscillator();
+  rightChannel = audioCtx.createOscillator();
+  gainNode = audioCtx.createGain();
+  initialized=true;
 
   // Set the frequency of the oscillators
   const baseFrequency = 200; // This is the base frequency, in Hz
@@ -31,14 +41,9 @@ playButton.addEventListener('click', () => {
 
 
   // Start the oscillators
-  if(playing){
-    leftChannel.stop();
-    rightChannel.stop();
-    console.log("started");
-  }
-  else{
-    leftChannel.start();
-    rightChannel.start();
-    console.log("started");
-  }
+  
+  leftChannel.start();
+  rightChannel.start();
+  console.log("started");
+  playing=true;
   });
