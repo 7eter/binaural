@@ -114,11 +114,36 @@ playButton.addEventListener('click', () => {
   });
 
   volumeInput.addEventListener('input', () => {
-    volume=volumeInput.value;
-    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
+    setVolume();
   });
+
+  function setVolume(newVolume = volumeInput.value){
+    if(newVolume<0)newVolume=0;
+    if(newVolume>0.5)newVolume=0.5;
+    volume=newVolume;
+    volumeInput.value=newVolume;
+    gainNode.gain.setValueAtTime(newVolume, audioCtx.currentTime);
+    playing=true;
+    playButton.innerHTML="Stop";
+    if(volume=="0"){
+      playing=false;
+      playButton.innerHTML="Play";
+    }
+    console.log("Volume set to "+ volume);
+  }
 
   function calcFeq(){
     leftChannel.frequency.setValueAtTime(baseFrequencyInput.value - differenceFrequencyInput.value/2, audioCtx.currentTime);
     rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value)/2, audioCtx.currentTime);
   }
+
+document.addEventListener("keydown", (event) => {
+    console.log("you pressed " + event.key);
+    if(event.key==="ArrowUp"){
+    setVolume(parseFloat(volumeInput.value)+0.05);
+    }
+    if(event.key==="ArrowDown"){
+      setVolume(parseFloat(volumeInput.value)-0.05);
+    }
+    return;
+});
