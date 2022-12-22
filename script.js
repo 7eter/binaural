@@ -10,13 +10,39 @@ let leftChannel;
 let rightChannel;
 let gainNode;
 
+
+let volumeInterval; 
+let volume=volumeInput.value;
+
+function stopAudio(){
+  if(gainNode.gain.value>0){
+    volumeInput.value-=0.01;
+    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
+  }
+  else{
+    clearInterval(volumeInterval);
+    //leftChannel.stop();
+    //rightChannel.stop();
+    console.log("stoped");
+  }
+}
+
+function startAudio(){
+  if(gainNode.gain.value<volume){
+    volumeInput.value+=0.01;
+    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
+  }
+  else{
+    clearInterval(volumeInterval);
+    console.log("playing");
+  }
+}
+
 playButton.addEventListener('click', () => {
   if(playing){
-    leftChannel.stop();
-    rightChannel.stop();
-    console.log("stoped");
     playing=false;
     playButton.innerHTML="Play";
+    volumeInterval = setInterval(stopAudio,10);
     return;
   }
 
@@ -24,15 +50,13 @@ playButton.addEventListener('click', () => {
   audioCtx = new AudioContext();
   leftChannel = audioCtx.createOscillator();
   rightChannel = audioCtx.createOscillator();
+  pannerLeft = audioCtx.createPanner();
+  pannerRight = audioCtx.createPanner();
   gainNode = audioCtx.createGain();
 
   // Set the frequency of the oscillators
-  const baseFrequency = 200; // This is the base frequency, in Hz
-  const differenceFrequency = 10; // This is the difference between the left and right channel frequencies, in Hz
-  leftChannel.frequency.setValueAtTime(baseFrequencyInput.value - differenceFrequencyInput.value/2, audioCtx.currentTime);
-  rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value)/2, audioCtx.currentTime);
-  const pannerLeft = audioCtx.createPanner();
-  const pannerRight = audioCtx.createPanner();
+  calcFeq();
+  // Set volume
   gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
 
   // Set the panning of the channels
@@ -52,10 +76,29 @@ playButton.addEventListener('click', () => {
 
 
   // Start the oscillators
-  
   leftChannel.start();
   rightChannel.start();
+  volumeInterval = setInterval(startAudio,10);
   console.log("started");
   playing=true;
   playButton.innerHTML="Stop";
   });
+
+
+  baseFrequencyInput.addEventListener('input', () => {
+    calcFeq();
+  });
+
+  differenceFrequencyInput.addEventListener('input', () => {
+    calcFeq()
+  });
+
+  volumeInput.addEventListener('input', () => {
+    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
+    volume=volumeInput.value;
+  });
+
+  function calcFeq(){
+    leftChannel.frequency.setValueAtTime(baseFrequencyInput.value - differenceFrequencyInput.value/2, audioCtx.currentTime);
+    rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value)/2, audioCtx.currentTime);
+  }
