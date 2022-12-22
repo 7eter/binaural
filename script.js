@@ -118,6 +118,8 @@ playButton.addEventListener('click', () => {
   });
 
   function setVolume(newVolume = volumeInput.value){
+    if(newVolume<0)newVolume=0;
+    if(newVolume>0.5)newVolume=0.5;
     volume=newVolume;
     volumeInput.value=newVolume;
     gainNode.gain.setValueAtTime(newVolume, audioCtx.currentTime);
@@ -135,3 +137,13 @@ playButton.addEventListener('click', () => {
     rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value)/2, audioCtx.currentTime);
   }
 
+document.addEventListener("keydown", (event) => {
+    console.log("you pressed " + event.key);
+    if(event.key==="ArrowUp"){
+    setVolume(parseFloat(volumeInput.value)+0.05);
+    }
+    if(event.key==="ArrowDown"){
+      setVolume(parseFloat(volumeInput.value)-0.05);
+    }
+    return;
+});
