@@ -3,6 +3,7 @@ const differenceFrequencyInput = document.getElementById('difference-frequency')
 const volumeInput = document.getElementById('volume');
 const playButton = document.getElementById('play-button');
 
+let initialized=false;
 let playing=false;
 
 let audioCtx;
@@ -10,42 +11,12 @@ let leftChannel;
 let rightChannel;
 let gainNode;
 
-
 let volumeInterval; 
 let volume=volumeInput.value;
 
-function stopAudio(){
-  if(gainNode.gain.value>0){
-    volumeInput.value-=0.01;
-    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
-  }
-  else{
-    clearInterval(volumeInterval);
-    //leftChannel.stop();
-    //rightChannel.stop();
-    console.log("stoped");
-  }
-}
 
-function startAudio(){
-  if(gainNode.gain.value<volume){
-    volumeInput.value+=0.01;
-    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
-  }
-  else{
-    clearInterval(volumeInterval);
-    console.log("playing");
-  }
-}
 
-playButton.addEventListener('click', () => {
-  if(playing){
-    playing=false;
-    playButton.innerHTML="Play";
-    volumeInterval = setInterval(stopAudio,10);
-    return;
-  }
-
+function initializeOszillator(){
   // Set up audio context and nodes
   audioCtx = new AudioContext();
   leftChannel = audioCtx.createOscillator();
@@ -78,10 +49,58 @@ playButton.addEventListener('click', () => {
   // Start the oscillators
   leftChannel.start();
   rightChannel.start();
-  volumeInterval = setInterval(startAudio,10);
-  console.log("started");
-  playing=true;
-  playButton.innerHTML="Stop";
+  initialized=true;
+}
+
+
+function stopAudio(){
+  if(gainNode.gain.value>0){
+    volumeInput.value-=0.01;
+    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
+  }
+  else{
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+    clearInterval(volumeInterval);
+    //leftChannel.stop();
+    //rightChannel.stop();
+    console.log("stoped");
+  }
+}
+
+function startAudio(){
+  if(gainNode.gain.value<parseFloat(volume)){
+    volumeInput.value=parseFloat(volumeInput.value)+0.01;
+    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
+  }
+  else{
+    volumeInput.value=parseFloat(volume);
+    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
+    clearInterval(volumeInterval);
+    console.log("playing");
+  }
+}
+
+playButton.addEventListener('click', () => {
+  if(!initialized){
+    initializeOszillator();
+  }
+
+  if(volume!=gainNode.gain.value && gainNode.gain.value!=0){
+    console.log("clicked while fading in/out");
+    return;
+  }
+
+  if(playing){
+    playing=false;
+    playButton.innerHTML="Play";
+    volumeInterval = setInterval(stopAudio,10);
+    return;
+  }
+  else{
+    playing=true;
+    playButton.innerHTML="Stop";
+    volumeInterval = setInterval(startAudio,10);
+  }
   });
 
 
@@ -94,8 +113,8 @@ playButton.addEventListener('click', () => {
   });
 
   volumeInput.addEventListener('input', () => {
-    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
     volume=volumeInput.value;
+    gainNode.gain.setValueAtTime(volumeInput.value, audioCtx.currentTime);
   });
 
   function calcFeq(){
