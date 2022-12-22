@@ -97,6 +97,7 @@ playButton.addEventListener('click', () => {
     return;
   }
   else{
+    if(volume<0.01) volume=0.25;
     playing=true;
     playButton.innerHTML="Stop";
     volumeInterval = setInterval(startAudio,10);
