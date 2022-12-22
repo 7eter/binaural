@@ -110,7 +110,7 @@ playButton.addEventListener('click', () => {
   });
 
   differenceFrequencyInput.addEventListener('input', () => {
-    calcFeq()
+    calcFeq();
   });
 
   volumeInput.addEventListener('input', () => {
