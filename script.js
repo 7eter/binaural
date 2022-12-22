@@ -85,7 +85,7 @@ playButton.addEventListener('click', () => {
     initializeOszillator();
   }
 
-  if(volume!=gainNode.gain.value && gainNode.gain.value!=0){
+  if(Math.abs(parseFloat(volume)-gainNode.gain.value)>0.01 && gainNode.gain.value!=0){
     console.log("clicked while fading in/out");
     return;
   }
@@ -97,6 +97,7 @@ playButton.addEventListener('click', () => {
     return;
   }
   else{
+    if(volume<0.01) volume=0.25;
     playing=true;
     playButton.innerHTML="Stop";
     volumeInterval = setInterval(startAudio,10);
@@ -109,7 +110,7 @@ playButton.addEventListener('click', () => {
   });
 
   differenceFrequencyInput.addEventListener('input', () => {
-    calcFeq()
+    calcFeq();
   });
 
   volumeInput.addEventListener('input', () => {
