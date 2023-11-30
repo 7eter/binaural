@@ -132,6 +132,31 @@ playButton.addEventListener('click', () => {
     console.log("Volume set to "+ volume);
   }
 
+  function toggleLeftSpeaker(button){
+    // stop and play left oscillator:
+    if(leftChannel.frequency.value==0){
+      leftChannel.frequency.setValueAtTime(baseFrequencyInput.value - differenceFrequencyInput.value/2, audioCtx.currentTime);
+      button.style.backgroundColor="white";
+    }
+    else{
+      leftChannel.frequency.setValueAtTime(0, audioCtx.currentTime);
+      button.style.backgroundColor="gray";
+    }
+  }
+
+  function toggleRightSpeaker(button){
+    // stop and play right oscillator:
+    if(rightChannel.frequency.value==0){
+      rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value)/2, audioCtx.currentTime);
+      button.style.backgroundColor="white";
+    }
+    else{
+      rightChannel.frequency.setValueAtTime(0, audioCtx.currentTime);
+      button.style.backgroundColor="gray";
+    }
+  }
+
+
   function calcFeq(){
     leftChannel.frequency.setValueAtTime(baseFrequencyInput.value - differenceFrequencyInput.value/2, audioCtx.currentTime);
     rightChannel.frequency.setValueAtTime(parseFloat(baseFrequencyInput.value) + parseFloat(differenceFrequencyInput.value)/2, audioCtx.currentTime);
